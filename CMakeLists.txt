@@ -77,3 +77,4 @@ install(FILES
 add_subdirectory(test/linux/slaveinfo)
 add_subdirectory(test/linux/eepromtool)
 add_subdirectory(test/linux/simple_test)
+add_subdirectory(test/controller)
