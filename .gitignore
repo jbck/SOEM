@@ -3,3 +3,8 @@ install
 *~
 /doc/latex
 /doc/html
+Makefile
+CMakeFiles/
+CMakeCache.txt
+*.cmake
+*.user
