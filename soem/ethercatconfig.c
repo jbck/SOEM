@@ -589,7 +589,7 @@ int ecx_config_init(ecx_contextt *context, uint8 usetable)
          /* some slaves need eeprom available to PDI in init->preop transition */
          ecx_eeprom2pdi(context, slave);
          /* request pre_op for slave */
-         ecx_FPWRw(context->port, configadr, ECT_REG_ALCTL, htoes(EC_STATE_PRE_OP | EC_STATE_ACK) , EC_TIMEOUTRET3); /* set preop status */
+         //ecx_FPWRw(context->port, configadr, ECT_REG_ALCTL, htoes(EC_STATE_PRE_OP | EC_STATE_ACK) , EC_TIMEOUTRET3); /* set preop status */
       }
    }
    return wkc;
