@@ -124,6 +124,6 @@ void SlaveInfo::setDeviceState(const quint8 slaveId, quint8 state)
 {
     ec_FPWRw(ec_slave[slaveId].configadr, ECT_REG_ALCTL, htoes(state | EC_STATE_ACK) , EC_TIMEOUTRET3);
     QThread::msleep(200);
-    ecx_readstate(&ecx_context);
+    ec_readstate();
     setState(ec_slave[slaveId].state);
 }
