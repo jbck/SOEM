@@ -33,6 +33,15 @@ Window {
             anchors.margins: border_padding
         }
 
+        Button {
+            id: do_something
+            text: "do something"
+            onClicked: slaveinfo.sdoRead(1,1)
+            anchors.left: network_names.right
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.margins: border_padding
+        }
+
         Text {
             id: title
             text: slaveinfo.title

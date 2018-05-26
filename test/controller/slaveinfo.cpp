@@ -29,6 +29,18 @@ void SlaveInfo::connect(QString networkDeviceName)
     findAndConfigureSlaves();
 }
 
+void SlaveInfo::sdoRead(quint16 index, quint16 subindex)
+{
+    int bytes_read = 2;
+    qint8 data[2];
+    data[0]=1;
+    data[1]=1;
+    ec_SDOwrite(1, 0x6072, 0, false, bytes_read, data, EC_TIMEOUTRXM);
+    qDebug() << "WKT: " << ec_SDOread(1, 0x6072, 0, false, &bytes_read, data, EC_TIMEOUTRXM);
+    qDebug() << "Bytes read: " << bytes_read;
+    qDebug() << "Value: " << *(qint16*)data;
+}
+
 QString SlaveInfo::title() const
 {
     return m_title;
