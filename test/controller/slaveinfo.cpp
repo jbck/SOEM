@@ -67,11 +67,39 @@ void SlaveInfo::sdoRead(quint16 index, quint16 subindex)
         qDebug() << " CoE Object Description found, " << ODlist.Entries << " entries.";
         for( i = 0 ; i < ODlist.Entries ; i++)
         {
+            /*
+             * Handle the Object
+             */
             ec_readODdescription(i, &ODlist);
             while(EcatError) qDebug("%s", ec_elist2string());
-            Object * object = new Object(ODlist.Index[i], ODlist.DataType[i], this);
-            object->setDescription(QString(ODlist.Name[i]));
+            Object * object = new Object(QString(ODlist.Name[i]),
+                                         ODlist.Index[i],
+                                         ODlist.DataType[i],
+                                         ODlist.ObjectCode[i], this);
+            /*
+             * Handle the Sub-objects
+             */
+            memset(&OElist, 0, sizeof(OElist));
+            ec_readOE(i, &ODlist, &OElist);
+            while(EcatError) printf("%s", ec_elist2string());
+            for( j = 0 ; j < ODlist.MaxSub[i]+1 ; j++)
+            {
+                if ((OElist.DataType[j] > 0) && (OElist.BitLength[j] > 0))
+                {
+                    /* Grab the value of the SDO */
+                    /* TODO: call ec_SDOread() to get the actual value. Doesn't come free. */
+                    /* Populate the object with the data */
+                    SubObject * subObject = new SubObject(OElist.Name[j],
+                                                          OElist.DataType[j],
+                                                          OElist.BitLength[j],
+                                                          OElist.ObjAccess[j]);
+                    //object->
+                }
+            }
+
+
             m_objectDictionary.append(object);
+
         }
     }
     else

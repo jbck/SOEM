@@ -50,7 +50,29 @@ void SubObject::setBitLength(const quint16 &bitLength)
     m_bitLength = bitLength;
 }
 
-SubObject::SubObject(QObject *parent) : QObject(parent)
+quint16 SubObject::objectAccess() const
 {
+    return m_objectAccess;
+}
 
+void SubObject::setObjectAccess(const quint16 &objectAccess)
+{
+    m_objectAccess = objectAccess;
+}
+
+SubObject::SubObject(QString name,
+                     QVariant value,
+                     quint16 valueType,
+                     quint8 valueInfo,
+                     quint16 bitLength,
+                     quint16 objectAccess,
+                     QObject *parent)
+    : QObject(parent),
+      m_name(name),
+      m_value(value),
+      m_valueType(valueType),
+      m_valueInfo(valueInfo),
+      m_bitLength(bitLength),
+      m_objectAccess(objectAccess)
+{
 }

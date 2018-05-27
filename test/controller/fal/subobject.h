@@ -22,9 +22,17 @@ class SubObject : public QObject
     quint8 m_valueInfo;
     /** Number of bits */
     quint16 m_bitLength;
+    /** Access permissions */
+    quint16 m_objectAccess;
 
 public:
-    explicit SubObject(QObject *parent = nullptr);
+    explicit SubObject(QString name,
+                       QVariant value,
+                       quint16 valueType,
+                       quint8 valueInfo,
+                       quint16 bitLength,
+                       quint16 objectAccess,
+                       QObject *parent = nullptr);
 
     QString name() const;
     void setName(const QString &name);
@@ -40,6 +48,9 @@ public:
 
     quint16 bitLength() const;
     void setBitLength(const quint16 &bitLength);
+
+    quint16 objectAccess() const;
+    void setObjectAccess(const quint16 &objectAccess);
 
 signals:
     void nameChanged();
