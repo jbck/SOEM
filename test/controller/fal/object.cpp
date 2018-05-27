@@ -1,39 +1,16 @@
 #include "object.h"
 
-Object::Object(quint16 index, quint16 type, QObject *parent)
-    : QObject(parent),
-      m_description(""),
-      m_index(index),
-      m_value_type(type)
+QString Object::name() const
 {
+    return m_name;
 }
 
-QString Object::getString()
+void Object::setName(const QString &name)
 {
-    return m_value.toString();
+    m_name = name;
 }
 
-QVariant Object::getValue() const
-{
-    return m_value;
-}
-
-void Object::setValue(const QVariant &value)
-{
-    m_value.setValue(value);
-}
-
-QString Object::getDescription() const
-{
-    return m_description;
-}
-
-void Object::setDescription(const QString &description)
-{
-    m_description = description;
-}
-
-quint16 Object::getIndex() const
+quint16 Object::index() const
 {
     return m_index;
 }
@@ -41,4 +18,33 @@ quint16 Object::getIndex() const
 void Object::setIndex(const quint16 &index)
 {
     m_index = index;
+}
+
+quint16 Object::type() const
+{
+    return m_type;
+}
+
+void Object::setType(const quint16 &type)
+{
+    m_type = type;
+}
+
+quint8 Object::objectCode() const
+{
+    return m_objectCode;
+}
+
+void Object::setObjectCode(const quint8 &objectCode)
+{
+    m_objectCode = objectCode;
+}
+
+Object::Object(QString name, quint16 index, quint16 type, quint8 objectCode, QObject *parent)
+    : QObject(parent),
+      m_name(name),
+      m_index(index),
+      m_type(type),
+      m_objectCode(objectCode)
+{
 }
