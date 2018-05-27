@@ -21,6 +21,12 @@ SlaveInfo::SlaveInfo(QObject *parent) : QObject(parent)
     }
 }
 
+SlaveInfo::~SlaveInfo()
+{
+    /* Release the socket */
+    ec_close();
+}
+
 void SlaveInfo::connect(QString networkDeviceName)
 {
     /* Initialize SOEM, bind socket to ifname */
@@ -51,41 +57,31 @@ void SlaveInfo::sdoRead(quint16 index, quint16 subindex)
     ec_ODlistt ODlist;
     ec_OElistt OElist;
 
-    ODlist.Entries = 0; /* WHY? */
+    ODlist.Entries = 0; /* TODO: Why, if the memset is right below this? */
     memset(&ODlist, 0, sizeof(ODlist));
-    for (quint8 slaveId = 1; slaveId <= ec_slavecount; slaveId++) {
-        if( ec_readODlist(slaveId, &ODlist))
+    /* TODO: Do this for every slave instead of just the first */
+    int slaveId = 1;
+    if( ec_readODlist(slaveId, &ODlist))
+    {
+        /* The OD has been read for this slave. Time to populate the Object list. */
+        qDebug() << " CoE Object Description found, " << ODlist.Entries << " entries.";
+        for( i = 0 ; i < ODlist.Entries ; i++)
         {
-            qDebug() << " CoE Object Description found, " << ODlist.Entries << " entries.";
-            for( i = 0 ; i < ODlist.Entries ; i++)
-            {
-                ec_readODdescription(i, &ODlist);
-                while(EcatError) printf("%s", ec_elist2string());
-                qDebug(" Index: %4.4x Datatype: %4.4x Objectcode: %2.2x Name: %s",
-                    ODlist.Index[i], ODlist.DataType[i], ODlist.ObjectCode[i], ODlist.Name[i]);
-                memset(&OElist, 0, sizeof(OElist));
-                ec_readOE(i, &ODlist, &OElist);
-                while(EcatError) printf("%s", ec_elist2string());
-                for( j = 0 ; j < ODlist.MaxSub[i]+1 ; j++)
-                {
-                    if ((OElist.DataType[j] > 0) && (OElist.BitLength[j] > 0))
-                    {
-                        qDebug("  Sub: %2.2x Datatype: %4.4x Bitlength: %4.4x Obj.access: %4.4x Name: %s",
-                            j, OElist.DataType[j], OElist.BitLength[j], OElist.ObjAccess[j], OElist.Name[j]);
-                        if ((OElist.ObjAccess[j] & 0x0007))
-                        {
-                            qDebug() << "Datatype:" << OElist.DataType[j];
-                            //printf("          Value :%s\n", SDO2string(slaveId, ODlist.Index[i], j, OElist.DataType[j]));
-                        }
-                    }
-                }
-            }
+            ec_readODdescription(i, &ODlist);
+            while(EcatError) qDebug("%s", ec_elist2string());
+            Object * object = new Object(ODlist.Index[i], ODlist.DataType[i], this);
+            object->setDescription(QString(ODlist.Name[i]));
+            m_objectDictionary.append(object);
         }
-        else
-        {
-            while(EcatError) printf("%s", ec_elist2string());
-        }
+    }
+    else
+    {
+        while(EcatError) printf("%s", ec_elist2string());
+    }
 
+    qDebug() << "Object Dictionary";
+    for (Object * object : m_objectDictionary) {
+        qDebug() << object->getIndex() << ":" << object->getDescription();
     }
 }
 

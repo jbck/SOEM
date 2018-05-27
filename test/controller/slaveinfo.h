@@ -5,6 +5,7 @@
 #include <QString>
 
 #include "ethercat.h"
+#include "fal/object.h"
 
 class SlaveInfo : public QObject
 {
@@ -16,6 +17,7 @@ class SlaveInfo : public QObject
 
 public:
     explicit SlaveInfo(QObject *parent = nullptr);
+    ~SlaveInfo();
 
     Q_INVOKABLE void findAndConfigureSlaves();
     Q_INVOKABLE void recordDeviceState(const quint8 slaveId);
@@ -33,15 +35,16 @@ public:
 
 signals:
     void titleChanged();
-
     void nameChanged();
     void stateChanged();
 
 private:
+    /* TODO: Put this somewhere else. */
     QStringList m_networkNames;
-    QString m_title;
-    //char m_ethercat_IOmap[4096];
+    /** All the objects in the slave */
+    QList<Object *> m_objectDictionary;
 
+    QString m_title;
     /* TODO: These need to be in their own class, so they can be listed */
     QString m_name;
     QString m_state;

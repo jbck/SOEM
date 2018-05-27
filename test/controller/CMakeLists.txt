@@ -10,7 +10,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(Qt5 COMPONENTS Core Quick REQUIRED)
 
-set(SOURCES "main.cpp" "qml.qrc" "slaveinfo.cpp")
+set(SOURCES
+    "main.cpp"
+    "qml.qrc"
+    "slaveinfo.cpp"
+    "fal/object.cpp")
 add_executable(${PROJECT_NAME} ${SOURCES})
 
 target_link_libraries(${PROJECT_NAME} Qt5::Core Qt5::Quick soem)

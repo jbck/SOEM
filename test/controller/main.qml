@@ -43,7 +43,7 @@ Window {
         }
 
         Text {
-            id: title
+            id: txt_slave_number
             text: slaveinfo.title
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
