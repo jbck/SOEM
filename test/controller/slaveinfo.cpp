@@ -51,7 +51,8 @@ void SlaveInfo::sdoRead(quint16 index, quint16 subindex)
 //    qDebug() << "Bytes read: " << bytes_read;
 //    qDebug() << "Value: " << *(qint16*)data;
 
-    quint16 i, j;
+    /* Remove all the old objects so new objects can be added */
+    m_objectDictionary.clear();
 
     ec_ODlistt ODlist;
     ec_OElistt OElist;
@@ -64,7 +65,7 @@ void SlaveInfo::sdoRead(quint16 index, quint16 subindex)
     {
         /* The OD has been read for this slave. Time to populate the Object list. */
         qDebug() << " CoE Object Description found, " << ODlist.Entries << " entries.";
-        for( i = 0 ; i < ODlist.Entries ; i++)
+        for(quint16 i = 0 ; i < ODlist.Entries ; i++)
         {
             /*
              * Handle the Object
@@ -81,7 +82,7 @@ void SlaveInfo::sdoRead(quint16 index, quint16 subindex)
             memset(&OElist, 0, sizeof(OElist));
             ec_readOE(i, &ODlist, &OElist);
             while(EcatError) printf("%s", ec_elist2string());
-            for( j = 0 ; j < ODlist.MaxSub[i]+1 ; j++)
+            for(quint16 j = 0 ; j < ODlist.MaxSub[i]+1 ; j++)
             {
                 if ((OElist.DataType[j] > 0) && (OElist.BitLength[j] > 0))
                 {
