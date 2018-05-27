@@ -2,16 +2,20 @@
 #define SUBOBJECT_H
 
 #include <QObject>
+#include <QVariant>
 
 class SubObject : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(quint16 subIndex READ subIndex WRITE setSubIndex NOTIFY subIndexChanged)
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(QVariant value READ value WRITE setValue NOTIFY valueChanged)
     Q_PROPERTY(quint16 valueType READ valueType WRITE setValueType NOTIFY valueTypeChanged)
     Q_PROPERTY(quint8 valueInfo READ valueInfo WRITE setValueInfo NOTIFY valueInfoChanged)
-    Q_PROPERTY(quint16 bitLength READ bitLength WRITE setBitLengthInfo NOTIFY bitLengthChanged)
+    Q_PROPERTY(quint16 bitLength READ bitLength WRITE setBitLength NOTIFY bitLengthChanged)
 
+    /** The sub-index within the parent object */
+    quint16 m_subIndex;
     /** A text description */
     QString m_name;
     /** Contains the actual value of this object */
@@ -26,7 +30,8 @@ class SubObject : public QObject
     quint16 m_objectAccess;
 
 public:
-    explicit SubObject(QString name,
+    explicit SubObject(quint16 subIndex,
+                       QString name,
                        QVariant value,
                        quint16 valueType,
                        quint8 valueInfo,
@@ -52,7 +57,11 @@ public:
     quint16 objectAccess() const;
     void setObjectAccess(const quint16 &objectAccess);
 
+    quint16 subIndex() const;
+    void setSubIndex(const quint16 &subIndex);
+
 signals:
+    void subIndexChanged();
     void nameChanged();
     void valueChanged();
     void valueTypeChanged();

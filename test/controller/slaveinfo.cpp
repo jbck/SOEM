@@ -7,7 +7,6 @@
 #include "slaveinfo.h"
 #include "ethercat.h"
 
-
 SlaveInfo::SlaveInfo(QObject *parent) : QObject(parent)
 {
     QList<QNetworkInterface> interfaces = QNetworkInterface::allInterfaces();
@@ -52,7 +51,7 @@ void SlaveInfo::sdoRead(quint16 index, quint16 subindex)
 //    qDebug() << "Bytes read: " << bytes_read;
 //    qDebug() << "Value: " << *(qint16*)data;
 
-    int i, j;
+    quint16 i, j;
 
     ec_ODlistt ODlist;
     ec_OElistt OElist;
@@ -88,16 +87,18 @@ void SlaveInfo::sdoRead(quint16 index, quint16 subindex)
                 {
                     /* Grab the value of the SDO */
                     /* TODO: call ec_SDOread() to get the actual value. Doesn't come free. */
+                    QVariant value("NOT POPULATED");
                     /* Populate the object with the data */
-                    SubObject * subObject = new SubObject(OElist.Name[j],
+                    SubObject * subObject = new SubObject(j, /* sub-index */
+                                                          QString(OElist.Name[j]),
+                                                          value,
                                                           OElist.DataType[j],
+                                                          OElist.ValueInfo[j],
                                                           OElist.BitLength[j],
-                                                          OElist.ObjAccess[j]);
-                    //object->
+                                                          OElist.ObjAccess[j], object);
+                    object->addSubObject(subObject);
                 }
             }
-
-
             m_objectDictionary.append(object);
 
         }
@@ -109,7 +110,11 @@ void SlaveInfo::sdoRead(quint16 index, quint16 subindex)
 
     qDebug() << "Object Dictionary";
     for (Object * object : m_objectDictionary) {
-        qDebug() << object->getIndex() << ":" << object->getDescription();
+        qDebug() << QString("%1").arg(object->index() , 0, 16) << ":" << object->name();
+        for (SubObject * subObject : object->subObjectList())
+        {
+            qDebug() << "  Sub" << subObject->subIndex() << ":" << subObject->name();
+        }
     }
 }
 

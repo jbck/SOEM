@@ -40,6 +40,16 @@ void Object::setObjectCode(const quint8 &objectCode)
     m_objectCode = objectCode;
 }
 
+void Object::addSubObject(SubObject *subObject)
+{
+    m_subObjectList.append(subObject);
+}
+
+QList<SubObject *> Object::subObjectList() const
+{
+    return m_subObjectList;
+}
+
 Object::Object(QString name, quint16 index, quint16 type, quint8 objectCode, QObject *parent)
     : QObject(parent),
       m_name(name),

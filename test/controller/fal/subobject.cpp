@@ -60,7 +60,18 @@ void SubObject::setObjectAccess(const quint16 &objectAccess)
     m_objectAccess = objectAccess;
 }
 
-SubObject::SubObject(QString name,
+quint16 SubObject::subIndex() const
+{
+    return m_subIndex;
+}
+
+void SubObject::setSubIndex(const quint16 &subIndex)
+{
+    m_subIndex = subIndex;
+}
+
+SubObject::SubObject(quint16 subIndex,
+                     QString name,
                      QVariant value,
                      quint16 valueType,
                      quint8 valueInfo,
@@ -68,6 +79,7 @@ SubObject::SubObject(QString name,
                      quint16 objectAccess,
                      QObject *parent)
     : QObject(parent),
+      m_subIndex(subIndex),
       m_name(name),
       m_value(value),
       m_valueType(valueType),

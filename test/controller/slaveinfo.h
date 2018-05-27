@@ -6,6 +6,7 @@
 
 #include "ethercat.h"
 #include "fal/object.h"
+#include "fal/subobject.h"
 
 class SlaveInfo : public QObject
 {

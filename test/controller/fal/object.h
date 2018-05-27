@@ -3,6 +3,8 @@
 
 #include <QObject>
 
+#include "fal/subobject.h"
+
 class Object : public QObject
 {
     Q_OBJECT
@@ -11,7 +13,7 @@ class Object : public QObject
     Q_PROPERTY(quint16 index READ index WRITE setIndex NOTIFY indexChanged)
     Q_PROPERTY(quint16 type READ type WRITE setType NOTIFY typeChanged)
     Q_PROPERTY(quint8 objectCode READ objectCode WRITE setObjectCode NOTIFY objectCodeChanged)
-    Q_PROPERTY(QList<SubObject> subObjectList READ subObjectList WRITE setSubObjectList NOTIFY subObjectListChanged)
+    //Q_PROPERTY(QList<SubObject> subObjectList READ subObjectList NOTIFY subObjectListChanged)
 
     /** A text description */
     QString m_name;
@@ -28,7 +30,6 @@ class Object : public QObject
 public:
     explicit Object(QString name, quint16 index, quint16 type, quint8 objectCode, QObject *parent = nullptr);
 
-
     QString name() const;
     void setName(const QString &name);
 
@@ -41,7 +42,15 @@ public:
     quint8 objectCode() const;
     void setObjectCode(const quint8 &objectCode);
 
+    void addSubObject(SubObject * subObject);
+
+    QList<SubObject *> subObjectList() const;
+
 signals:
+    void nameChanged();
+    void indexChanged();
+    void typeChanged();
+    void objectCodeChanged();
 
 public slots:
 
