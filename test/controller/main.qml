@@ -7,7 +7,7 @@ import com.synapticon.somanet.ethercat.slaveinfo 1.0
 
 Window {
     visible: true
-    width: 220
+    width: 400
     height: 250
     color: 'whitesmoke'
     title: qsTr("OBLAC Mini")

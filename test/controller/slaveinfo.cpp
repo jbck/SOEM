@@ -7,6 +7,7 @@
 #include "slaveinfo.h"
 #include "ethercat.h"
 
+
 SlaveInfo::SlaveInfo(QObject *parent) : QObject(parent)
 {
     QList<QNetworkInterface> interfaces = QNetworkInterface::allInterfaces();
@@ -32,18 +33,60 @@ void SlaveInfo::connect(QString networkDeviceName)
 
 void SlaveInfo::sdoRead(quint16 index, quint16 subindex)
 {
-    QElapsedTimer timer;
-    int bytes_read = 2;
-    qint8 data[2];
-    data[0]=1;
-    data[1]=1;
-    timer.start();
-    ec_SDOwrite(1, 0x6072, 0, false, bytes_read, data, EC_TIMEOUTRXM);
-    int workcounter = ec_SDOread(1, 0x6072, 0, false, &bytes_read, data, EC_TIMEOUTRXM);
-    qDebug() << timer.elapsed();
-    qDebug() << "Workcounter: " << workcounter;
-    qDebug() << "Bytes read: " << bytes_read;
-    qDebug() << "Value: " << *(qint16*)data;
+//    QElapsedTimer timer;
+//    int bytes_read = 2;
+//    qint8 data[2];
+//    data[0]=1;
+//    data[1]=1;
+//    timer.start();
+//    ec_SDOwrite(1, 0x6072, 0, false, bytes_read, data, EC_TIMEOUTRXM);
+//    int workcounter = ec_SDOread(1, 0x6072, 0, false, &bytes_read, data, EC_TIMEOUTRXM);
+//    qDebug() << timer.elapsed();
+//    qDebug() << "Workcounter: " << workcounter;
+//    qDebug() << "Bytes read: " << bytes_read;
+//    qDebug() << "Value: " << *(qint16*)data;
+
+    int i, j;
+
+    ec_ODlistt ODlist;
+    ec_OElistt OElist;
+
+    ODlist.Entries = 0; /* WHY? */
+    memset(&ODlist, 0, sizeof(ODlist));
+    for (quint8 slaveId = 1; slaveId <= ec_slavecount; slaveId++) {
+        if( ec_readODlist(slaveId, &ODlist))
+        {
+            qDebug() << " CoE Object Description found, " << ODlist.Entries << " entries.";
+            for( i = 0 ; i < ODlist.Entries ; i++)
+            {
+                ec_readODdescription(i, &ODlist);
+                while(EcatError) printf("%s", ec_elist2string());
+                qDebug(" Index: %4.4x Datatype: %4.4x Objectcode: %2.2x Name: %s",
+                    ODlist.Index[i], ODlist.DataType[i], ODlist.ObjectCode[i], ODlist.Name[i]);
+                memset(&OElist, 0, sizeof(OElist));
+                ec_readOE(i, &ODlist, &OElist);
+                while(EcatError) printf("%s", ec_elist2string());
+                for( j = 0 ; j < ODlist.MaxSub[i]+1 ; j++)
+                {
+                    if ((OElist.DataType[j] > 0) && (OElist.BitLength[j] > 0))
+                    {
+                        qDebug("  Sub: %2.2x Datatype: %4.4x Bitlength: %4.4x Obj.access: %4.4x Name: %s",
+                            j, OElist.DataType[j], OElist.BitLength[j], OElist.ObjAccess[j], OElist.Name[j]);
+                        if ((OElist.ObjAccess[j] & 0x0007))
+                        {
+                            qDebug() << "Datatype:" << OElist.DataType[j];
+                            //printf("          Value :%s\n", SDO2string(slaveId, ODlist.Index[i], j, OElist.DataType[j]));
+                        }
+                    }
+                }
+            }
+        }
+        else
+        {
+            while(EcatError) printf("%s", ec_elist2string());
+        }
+
+    }
 }
 
 QString SlaveInfo::title() const
@@ -137,10 +180,12 @@ void SlaveInfo::findAndConfigureSlaves()
 
 }
 
+void SlaveInfo::recordDeviceState(const quint8 slaveId) {
+    ec_readstate();
+    setState(ec_slave[slaveId].state);
+}
+
 void SlaveInfo::setDeviceState(const quint8 slaveId, quint8 state)
 {
     ec_FPWRw(ec_slave[slaveId].configadr, ECT_REG_ALCTL, htoes(state | EC_STATE_ACK) , EC_TIMEOUTRET3);
-    QThread::msleep(200);
-    ec_readstate();
-    setState(ec_slave[slaveId].state);
 }

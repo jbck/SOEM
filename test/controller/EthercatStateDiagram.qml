@@ -7,6 +7,13 @@ Item {
     property int slave_id: 1
     property string slave_state: "NONE"
 
+    Timer {
+        interval: 200
+        running: true
+        repeat: true
+        onTriggered: slaveinfo.recordDeviceState(1)
+    }
+
     Button {
         id: btn_state_init
         height: button_height

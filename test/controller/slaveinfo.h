@@ -18,6 +18,7 @@ public:
     explicit SlaveInfo(QObject *parent = nullptr);
 
     Q_INVOKABLE void findAndConfigureSlaves();
+    Q_INVOKABLE void recordDeviceState(const quint8 slaveId);
     Q_INVOKABLE void setDeviceState(const quint8 slaveId, quint8 state);
     Q_INVOKABLE void connect(QString networkDeviceName);
     Q_INVOKABLE void sdoRead(quint16 index, quint16 subindex);
