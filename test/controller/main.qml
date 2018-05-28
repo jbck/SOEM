@@ -7,8 +7,8 @@ import com.synapticon.somanet.ethercat.slaveinfo 1.0
 
 Window {
     visible: true
-    width: 400
-    height: 250
+    width: 640
+    height: 480
     color: 'whitesmoke'
     title: qsTr("OBLAC Mini")
 
@@ -51,38 +51,15 @@ Window {
         }
     }
 
-    Rectangle {
-        id: txt_info
-        height: 30
+    EthercatControlHeader {
+        id: ethercat_control_header
+        name_of_device: slaveinfo.name
+        slave_id_numbers: slaveinfo.title
+        ethercat_slave_state: slaveinfo.state
+
         anchors.top: network_interface.bottom
         anchors.left: parent.left
         anchors.right: parent.right
-
-        color: 'gray'
-        Text {
-            text: slaveinfo.name
-            color: 'white'
-            anchors.left: parent.left
-            anchors.leftMargin: border_padding
-            anchors.verticalCenter: parent.verticalCenter
-        }
-        Text {
-            text: slaveinfo.state
-            color: 'white'
-            font.bold: true
-            anchors.right: parent.right
-            anchors.rightMargin: border_padding
-            anchors.verticalCenter: parent.verticalCenter
-        }
     }
 
-    EthercatStateDiagram {
-        id: diagram
-        slave_state: slaveinfo.state
-        anchors.top: txt_info.bottom
-        anchors.left: txt_info.left
-        anchors.bottom: parent.bottom
-        anchors.right: txt_info.right
-        anchors.margins: border_padding
-    }
 }

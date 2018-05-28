@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>EthercatStateDiagram.qml</file>
+        <file>EthercatControlHeader.qml</file>
     </qresource>
 </RCC>
