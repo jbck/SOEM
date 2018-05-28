@@ -14,6 +14,7 @@ set(SOURCES
     "main.cpp"
     "qml.qrc"
     "slaveinfo.cpp"
+    "fal/utils.cpp"
     "fal/object.cpp"
     "fal/subobject.cpp")
 add_executable(${PROJECT_NAME} ${SOURCES})

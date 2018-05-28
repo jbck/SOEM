@@ -6,6 +6,9 @@
 
 #include "slaveinfo.h"
 #include "ethercat.h"
+#include "fal/utils.h"
+#include "fal/object.h"
+#include "fal/subobject.h"
 
 SlaveInfo::SlaveInfo(QObject *parent) : QObject(parent)
 {
@@ -57,6 +60,9 @@ void SlaveInfo::sdoRead(quint16 index, quint16 subindex)
     ec_ODlistt ODlist;
     ec_OElistt OElist;
 
+    char usdo[128];
+
+
     ODlist.Entries = 0; /* TODO: Why, if the memset is right below this? */
     memset(&ODlist, 0, sizeof(ODlist));
     /* TODO: Do this for every slave instead of just the first */
@@ -87,12 +93,16 @@ void SlaveInfo::sdoRead(quint16 index, quint16 subindex)
                 if ((OElist.DataType[j] > 0) && (OElist.BitLength[j] > 0))
                 {
                     /* Grab the value of the SDO */
-                    /* TODO: call ec_SDOread() to get the actual value. Doesn't come free. */
-                    QVariant value("NOT POPULATED");
+                    /* TODO: Get rid of all the array crap. */
+                    memset(&usdo, 0, 128);
+                    int l = sizeof(usdo) - 1;
+                    /* TODO: Wrap this in a check for write-only objects */
+                    ec_SDOread(slaveId, object->index(), j, FALSE, &l, &usdo, EC_TIMEOUTRXM);
+                    QVariant * value = Utils::sdobytes2type(usdo, OElist.DataType[j]);
                     /* Populate the object with the data */
                     SubObject * subObject = new SubObject(j, /* sub-index */
                                                           QString(OElist.Name[j]),
-                                                          value,
+                                                          *value,
                                                           OElist.DataType[j],
                                                           OElist.ValueInfo[j],
                                                           OElist.BitLength[j],
@@ -114,7 +124,7 @@ void SlaveInfo::sdoRead(quint16 index, quint16 subindex)
         qDebug() << QString("%1").arg(object->index() , 0, 16) << ":" << object->name();
         for (SubObject * subObject : object->subObjectList())
         {
-            qDebug() << "  Sub" << subObject->subIndex() << ":" << subObject->name();
+            qDebug() << "  Sub" << subObject->subIndex() << ":" << subObject->value() << ":" << subObject->name();
         }
     }
 }
