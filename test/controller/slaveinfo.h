@@ -15,6 +15,7 @@ class SlaveInfo : public QObject
     Q_PROPERTY(QString title READ title WRITE setTitle NOTIFY titleChanged)
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(QString state READ state NOTIFY stateChanged)
+    Q_PROPERTY(QList<Object*> objectDictionary READ objectDictionary NOTIFY objectDictionaryChanged)
 
 public:
     explicit SlaveInfo(QObject *parent = nullptr);
@@ -25,6 +26,7 @@ public:
     Q_INVOKABLE void setDeviceState(const quint8 slaveId, quint8 state);
     Q_INVOKABLE void connect(QString networkDeviceName);
     Q_INVOKABLE void sdoRead(quint16 index, quint16 subindex);
+    Q_INVOKABLE void odPrintout();
 
     QStringList networkNames();
     QString name();
@@ -34,10 +36,13 @@ public:
     QString title() const;
     void setTitle(const QString &value);
 
+    QList<Object *> objectDictionary() const;
+
 signals:
     void titleChanged();
     void nameChanged();
     void stateChanged();
+    void objectDictionaryChanged();
 
 private:
     /* TODO: Put this somewhere else. */

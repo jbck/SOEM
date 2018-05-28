@@ -34,10 +34,19 @@ Window {
         }
 
         Button {
-            id: do_something
-            text: "do something"
+            id: get_od
+            text: "Get OD"
             onClicked: slaveinfo.sdoRead(1,1)
             anchors.left: network_names.right
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.margins: border_padding
+        }
+
+        Button {
+            id: print_od
+            text: "Print OD"
+            onClicked: slaveinfo.odPrintout()
+            anchors.left: get_od.right
             anchors.verticalCenter: parent.verticalCenter
             anchors.margins: border_padding
         }
@@ -60,6 +69,24 @@ Window {
         anchors.top: network_interface.bottom
         anchors.left: parent.left
         anchors.right: parent.right
+    }
+
+    Component {
+        id: object_delegate
+        Row {
+            spacing: 10
+            Text { text: name }
+        }
+    }
+
+    ListView {
+        model: slaveinfo.objectDictionary
+        anchors.top: ethercat_control_header.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+
+        delegate: object_delegate
     }
 
 }

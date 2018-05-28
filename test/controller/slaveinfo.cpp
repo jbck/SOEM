@@ -109,6 +109,10 @@ void SlaveInfo::sdoRead(quint16 index, quint16 subindex)
         while(EcatError) printf("%s", ec_elist2string());
     }
 
+}
+
+void SlaveInfo::odPrintout()
+{
     qDebug() << "Object Dictionary";
     for (Object * object : m_objectDictionary) {
         qDebug() << QString("%1").arg(object->index() , 0, 16) << ":" << object->name();
@@ -132,6 +136,11 @@ void SlaveInfo::setTitle(const QString &value)
     m_title = value;
     emit titleChanged();
 
+}
+
+QList<Object *> SlaveInfo::objectDictionary() const
+{
+    return m_objectDictionary;
 }
 
 QStringList SlaveInfo::networkNames()
