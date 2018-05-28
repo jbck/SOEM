@@ -42,17 +42,8 @@ void SlaveInfo::connect(QString networkDeviceName)
 void SlaveInfo::sdoRead(quint16 index, quint16 subindex)
 {
 //    QElapsedTimer timer;
-//    int bytes_read = 2;
-//    qint8 data[2];
-//    data[0]=1;
-//    data[1]=1;
 //    timer.start();
-//    ec_SDOwrite(1, 0x6072, 0, false, bytes_read, data, EC_TIMEOUTRXM);
-//    int workcounter = ec_SDOread(1, 0x6072, 0, false, &bytes_read, data, EC_TIMEOUTRXM);
 //    qDebug() << timer.elapsed();
-//    qDebug() << "Workcounter: " << workcounter;
-//    qDebug() << "Bytes read: " << bytes_read;
-//    qDebug() << "Value: " << *(qint16*)data;
 
     /* Remove all the old objects so new objects can be added */
     m_objectDictionary.clear();
@@ -61,7 +52,6 @@ void SlaveInfo::sdoRead(quint16 index, quint16 subindex)
     ec_OElistt OElist;
 
     char usdo[128];
-
 
     ODlist.Entries = 0; /* TODO: Why, if the memset is right below this? */
     memset(&ODlist, 0, sizeof(ODlist));
