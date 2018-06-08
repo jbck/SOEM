@@ -2,9 +2,6 @@ import QtQuick 2.10
 import QtQuick.Window 2.10
 import QtQuick.Controls 2.0
 
-
-import com.synapticon.somanet.ethercat.slaveinfo 1.0
-
 Window {
     visible: true
     width: 640
@@ -13,10 +10,6 @@ Window {
     title: qsTr("OBLAC Mini")
 
     property int border_padding: 3
-
-    SlaveInfo {
-        id: slaveinfo
-    }
 
     Rectangle {
         id: network_interface
@@ -74,7 +67,8 @@ Window {
     Component {
         id: object_delegate
         Row {
-            spacing: 10
+            spacing: 20
+            height: 30
             Text { text: name }
         }
     }
@@ -85,6 +79,7 @@ Window {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
+        z: -1
 
         delegate: object_delegate
     }

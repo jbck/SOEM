@@ -21,6 +21,13 @@ SlaveInfo::SlaveInfo(QObject *parent) : QObject(parent)
             m_networkNames.append(i.name());
         }
     }
+
+    Object * object = new Object("Name 0", 0x1000, 0, 1);
+    m_objectDictionary.append(object);
+    object = new Object("Name 1", 0x1001, 0, 1);
+    m_objectDictionary.append(object);
+    object = new Object("Name 2", 0x1002, 0, 1);
+    m_objectDictionary.append(object);
 }
 
 SlaveInfo::~SlaveInfo()
