@@ -1,27 +1,17 @@
 #include <QMessageLogger>
 #include <QThread>
-#include <QNetworkInterface>
-#include <QRegularExpression>
+#include <QDebug>
+
 #include <QElapsedTimer>
 
-#include "slaveinfo.h"
+#include "slave.h"
 #include "ethercat.h"
 #include "fal/utils.h"
 #include "fal/object.h"
 #include "fal/subobject.h"
 
-SlaveInfo::SlaveInfo(QObject *parent) : QObject(parent)
+Slave::Slave(QObject * parent) : BasicListItem(parent)
 {
-    QList<QNetworkInterface> interfaces = QNetworkInterface::allInterfaces();
-    /* Describe interfaces named 'lo' or start with a w (wireless?) */
-    QRegularExpression re = QRegularExpression("(lo|w.*)");
-    /* Filter out the interfaces described above */
-    for (QNetworkInterface i : interfaces) {
-        if (!i.name().contains(re)) {
-            m_networkNames.append(i.name());
-        }
-    }
-
     Object * object = new Object("Name 0", 0x1000, 0, 1);
     m_objectDictionary.append(object);
     object = new Object("Name 1", 0x1001, 0, 1);
@@ -30,23 +20,27 @@ SlaveInfo::SlaveInfo(QObject *parent) : QObject(parent)
     m_objectDictionary.append(object);
 }
 
-SlaveInfo::~SlaveInfo()
+Slave::~Slave()
 {
     /* Release the socket */
     ec_close();
 }
 
-void SlaveInfo::connect(QString networkDeviceName)
+QVariant Slave::data(int role) const
 {
-    /* Initialize SOEM, bind socket to ifname */
-    if(!ec_init(networkDeviceName.toStdString().c_str())) {
-        QMessageLogger().fatal("Cannot open socket. Run as root.");
+    switch(role) {
+    default:
+        return QVariant();
     }
-    /* Now search for EtherCAT slaves */
-    findAndConfigureSlaves();
 }
 
-void SlaveInfo::sdoRead(quint16 index, quint16 subindex)
+QHash<int, QByteArray> Slave::roleNames() const
+{
+    QHash<int, QByteArray> names;
+    return names;
+}
+
+void Slave::sdoRead(quint16 index, quint16 subindex)
 {
 //    QElapsedTimer timer;
 //    timer.start();
@@ -118,7 +112,7 @@ void SlaveInfo::sdoRead(quint16 index, quint16 subindex)
 
 }
 
-void SlaveInfo::odPrintout()
+void Slave::odPrintout()
 {
     qDebug() << "Object Dictionary";
     for (Object * object : m_objectDictionary) {
@@ -130,12 +124,12 @@ void SlaveInfo::odPrintout()
     }
 }
 
-QString SlaveInfo::title() const
+QString Slave::title() const
 {
     return m_title;
 }
 
-void SlaveInfo::setTitle(const QString &value)
+void Slave::setTitle(const QString &value)
 {
     if (value == m_title) {
         return;
@@ -145,22 +139,18 @@ void SlaveInfo::setTitle(const QString &value)
 
 }
 
-QList<Object *> SlaveInfo::objectDictionary() const
+QList<Object *> Slave::objectDictionary() const
 {
     return m_objectDictionary;
 }
 
-QStringList SlaveInfo::networkNames()
-{
-    return m_networkNames;
-}
 
-QString SlaveInfo::name()
+QString Slave::name()
 {
     return m_name;
 }
 
-void SlaveInfo::setName(const QString &name)
+void Slave::setName(const QString &name)
 {
     if (name == m_name) {
         return;
@@ -169,12 +159,12 @@ void SlaveInfo::setName(const QString &name)
     emit nameChanged();
 }
 
-QString SlaveInfo::state()
+QString Slave::state()
 {
     return m_state;
 }
 
-void SlaveInfo::setState(const quint8 state)
+void Slave::setState(const quint8 state)
 {
     QString newState;
     /* These cases test for the EtherCAT state enumeration */
@@ -209,29 +199,13 @@ void SlaveInfo::setState(const quint8 state)
     emit stateChanged();
 }
 
-void SlaveInfo::findAndConfigureSlaves()
-{
-    /* find and auto-config slaves */
-    if (ec_config_init(FALSE) <= 0) {
-         QMessageLogger().warning("No slaves were found.");
-    }
-    /* Measure propagation delays and such? */
-    ec_configdc();
 
-    for (quint8 slaveId = 1; slaveId <= ec_slavecount; slaveId++) {
-        setState(ec_slave[slaveId].state);
-        setName(QString(ec_slave[slaveId].name));
-        setTitle("Slaves: " + QString::number(ec_slavecount));
-    }
-
-}
-
-void SlaveInfo::recordDeviceState(const quint8 slaveId) {
+void Slave::recordDeviceState(const quint8 slaveId) {
     ec_readstate();
     setState(ec_slave[slaveId].state);
 }
 
-void SlaveInfo::setDeviceState(const quint8 slaveId, quint8 state)
+void Slave::setDeviceState(const quint8 slaveId, quint8 state)
 {
     ec_FPWRw(ec_slave[slaveId].configadr, ECT_REG_ALCTL, htoes(state | EC_STATE_ACK) , EC_TIMEOUTRET3);
 }

@@ -20,8 +20,8 @@ Window {
 
         ComboBox {
             id: network_names
-            model: slaveinfo.networkNames
-            onCurrentTextChanged: slaveinfo.connect(network_names.currentText)
+            model: network.networkNames
+            onCurrentTextChanged: network.connect(network_names.currentText)
             anchors.verticalCenter: parent.verticalCenter
             anchors.margins: border_padding
         }
@@ -69,12 +69,12 @@ Window {
         Row {
             spacing: 20
             height: 30
-            Text { text: name }
+            Text { text: "name will go here" }
         }
     }
 
     ListView {
-        model: slaveinfo.objectDictionary
+        model: network
         anchors.top: ethercat_control_header.bottom
         anchors.left: parent.left
         anchors.right: parent.right

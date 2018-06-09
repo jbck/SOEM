@@ -13,7 +13,9 @@ find_package(Qt5 COMPONENTS Core Quick REQUIRED)
 set(SOURCES
     "main.cpp"
     "qml.qrc"
-    "slaveinfo.cpp"
+    "slave.cpp"
+    "network.cpp"
+    "basiclistmodel.cpp"
     "fal/utils.cpp"
     "fal/object.cpp"
     "fal/subobject.cpp")
