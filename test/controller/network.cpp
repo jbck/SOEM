@@ -17,6 +17,13 @@ Network::Network(QObject * parent)
             m_networkNames.append(i.name());
         }
     }
+
+    Slave * slave = new Slave(this);
+    appendRow(slave);
+    slave = new Slave(this);
+    appendRow(slave);
+    slave = new Slave(this);
+    appendRow(slave);
 }
 
 void Network::setData(const long id, const QVariant &value, int role)
