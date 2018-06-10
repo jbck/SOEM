@@ -29,6 +29,10 @@ Slave::~Slave()
 QVariant Slave::data(int role) const
 {
     switch(role) {
+    case NameRole:
+        return name();
+    case TitleRole:
+        return title();
     default:
         return QVariant();
     }
@@ -37,6 +41,8 @@ QVariant Slave::data(int role) const
 QHash<int, QByteArray> Slave::roleNames() const
 {
     QHash<int, QByteArray> names;
+    names[NameRole] = "name";
+    names[TitleRole] = "title";
     return names;
 }
 
@@ -145,7 +151,7 @@ QList<Object *> Slave::objectDictionary() const
 }
 
 
-QString Slave::name()
+QString Slave::name() const
 {
     return m_name;
 }
@@ -159,7 +165,7 @@ void Slave::setName(const QString &name)
     emit nameChanged();
 }
 
-QString Slave::state()
+QString Slave::state() const
 {
     return m_state;
 }

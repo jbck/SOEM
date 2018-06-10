@@ -69,7 +69,8 @@ Window {
         Row {
             spacing: 20
             height: 30
-            Text { text: "name will go here" }
+            Text { text: name }
+            Text { text: title }
         }
     }
 

@@ -12,13 +12,20 @@
 class Slave : public BasicListItem
 {
     Q_OBJECT
-
+    Q_ENUMS(Roles)
     Q_PROPERTY(QString title READ title WRITE setTitle NOTIFY titleChanged)
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(QString state READ state NOTIFY stateChanged)
     Q_PROPERTY(QList<Object*> objectDictionary READ objectDictionary NOTIFY objectDictionaryChanged)
 
 public:
+    enum Roles {
+        IdRole = Qt::UserRole + 1,
+        TitleRole,
+        NameRole,
+        StateRole,
+    };
+
     explicit Slave(QObject * parent = nullptr);
     ~Slave();
 
@@ -31,9 +38,9 @@ public:
     Q_INVOKABLE void sdoRead(quint16 index, quint16 subindex);
     Q_INVOKABLE void odPrintout();
 
-    QString name();
+    QString name() const;
     void setName(const QString &name);
-    QString state();
+    QString state() const;
     void setState(const quint8 state);
     QString title() const;
     void setTitle(const QString &value);

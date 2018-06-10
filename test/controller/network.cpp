@@ -17,13 +17,6 @@ Network::Network(QObject * parent)
             m_networkNames.append(i.name());
         }
     }
-
-    Slave * slave = new Slave(this);
-    appendRow(slave);
-    slave = new Slave(this);
-    appendRow(slave);
-    slave = new Slave(this);
-    appendRow(slave);
 }
 
 void Network::setData(const long id, const QVariant &value, int role)
@@ -50,10 +43,12 @@ void Network::findAndConfigureSlaves()
     /* Measure propagation delays and such? */
     ec_configdc();
 
+    Slave * slave;
     for (quint8 slaveId = 1; slaveId <= ec_slavecount; slaveId++) {
-        //setState(ec_slave[slaveId].state);
-        //setName(QString(ec_slave[slaveId].name));
-        //setTitle("Slaves: " + QString::number(ec_slavecount));
+        slave = new Slave(this);
+        slave->setName("Slave" + QString::number(slaveId));
+        slave->setTitle(QString(ec_slave[slaveId].name));
+        appendRow(slave);
     }
 }
 
